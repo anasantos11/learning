@@ -7,7 +7,8 @@ function getToken() {
     url: "https://www.facebook.com/v3.1/dialog/oauth?",
     data: {
       "client_id": clienteId,
-      "redirect_uri": url
+      "redirect_uri": url,
+      "state": "st=state123abc,ds=123456789"
     },
     type: "GET",
     success: function (response) {
