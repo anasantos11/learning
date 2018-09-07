@@ -1,10 +1,10 @@
 var token = '';
 var clienteId = '2030589643652951'; // Application ID - Substitua pelo seu APP ID
-var url = "https://app-apds.azurewebsites.net/"; // URL da sua página - Substitua pela sua
+var url = "https://app-apds.azurewebsites.net/oauth"; // URL da sua página - Substitua pela sua
 
 function getToken() {
   $.ajax({
-    url: "https://graph.facebook.com/v3.1/oauth/access_token",
+    url: "https://www.facebook.com/v3.1/dialog/oauth?",
     data: {
       "client_id": clienteId,
       "redirect_uri": url
