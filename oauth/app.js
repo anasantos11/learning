@@ -31,6 +31,11 @@ function getToken() {
       "Accept": "application/json"
     },
     crossDomain: true,
+    beforeSend: function(xhr){
+      xhr.setRequestHeader('Access-Control-Allow-origin', 'true');
+      xhr.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, X-Requested-With, Session');
+      xhr.setRequestHeader('Access-Control-Request-Method', 'POST');
+      },
     success: function (response) {
       token = response.access_token;
       getApi();
