@@ -1,10 +1,13 @@
 var token = '';
 var code = '';
-var clienteId = '2030589643652951'; // Application ID - Substitua pelo seu APP ID
-var url = "http://localhost:8080/"; // URL da sua página - Substitua pela sua
+var urlCode = "https://github.com/login/oauth/authorize?";
+var urlToken = "https://github.com/login/oauth/access_token?";
+var clienteId = '794e8e44a1f6e0ee3f58';
+var clientSecret = '75ebbeece39f01cb2e43e35f2685448c76ae3585';
+var url = "https://app-apds.azurewebsites.net/oauth/";
+var dadosGitHub = "";
 
-
-function getSpotifyVariable(variable) {
+function getVariable(variable) {
   var query = window.location.search.substring(1);
   var vars = query.split("&");
   for (var i = 0; i < vars.length; i++) {
@@ -14,37 +17,56 @@ function getSpotifyVariable(variable) {
   return (false);
 }
 
-
-function getCode() {
+function getToken() {
   $.ajax({
-    url: "https://www.facebook.com/v3.1/dialog/oauth?",
+    url: "https://github.com/login/oauth/access_token",
     data: {
       "client_id": clienteId,
-      "redirect_uri": url
+      "redirect_uri": url,
+      "client_secret": clientSecret,
+      "code": code
     },
-    type: "GET",
+    type: "POST",
+    headers: {
+      "Accept": "application/json"
+    },
     crossDomain: true,
     success: function (response) {
-      var resposta = response;
-      debugger;
-      return response;
+      token = response.access_token;
+      getApi();
     },
     error: function (error) {
-      var erro = error;
-      debugger;
-      return null;
+      document.getElementById("dados").innerHTML = "O seguinte problema ocorreu: " + JSON.stringify(error, null, '\t');
     }
   })
 }
 
-token = getSpotifyVariable('access_token');
+function getApi() {
+  $.ajax({
+    url: "https://api.github.com/user",
+    data: {
+      "access_token": token
+    },
+    type: "GET",
+    crossDomain: true,
+    success: function (response) {
+      dadosGitHub = response;
+      document.getElementById("dados").innerHTML = JSON.stringify(dadosGitHub, null, '\t');
+      $("div").show();
+    },
+    error: function (error) {
+      document.getElementById("dados").innerHTML = "O seguinte problema ocorreu: " + JSON.stringify(error, null, '\t');
+    }
+  })
+}
+
+token = getVariable('access_token');
 if (!token) {
-  code = getSpotifyVariable('code');
+  code = getVariable('code');
   if (!code) {
-    window.location = "https://graph.facebook.com/oauth/authorize?client_id=" + clienteId + "&redirect_uri=" + url;
+    window.location = urlCode + "client_id=" + clienteId + "&redirect_uri=" + url;
   } else {
-    debugger;
-    window.location = "https://graph.facebook.com/v3.1/oauth/access_token?client_id=" + clienteId + "&redirect_uri=" + url + "&code=" + code + "&client_secret=" + "027551e060534e25e5ad5e137e36649f"
+    getToken();
   }
 }
 
